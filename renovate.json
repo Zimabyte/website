@@ -1,0 +1,19 @@
+{
+	"extends": [
+		"config:recommended",
+		"schedule:nonOfficeHours",
+		"group:monorepos",
+		"group:recommended",
+		"replacements:all",
+		"workarounds:all",
+		"docker:pinDigests",
+		"abandonments:recommended",
+		"mergeConfidence:all-badges",
+		"helpers:pinGitHubActionDigests",
+		":configMigration",
+		":dependencyDashboard",
+		":ignoreModulesAndTests",
+		":pinAllExceptPeerDependencies",
+		":semanticPrefixFixDepsChoreOthers"
+	]
+}

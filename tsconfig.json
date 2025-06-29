@@ -1,0 +1,17 @@
+{
+	"compilerOptions": {
+		"allowJs": false,
+		"isolatedModules": true,
+		"lib": ["ES2022", "DOM", "DOM.Iterable"],
+		"module": "ES2022",
+		"moduleDetection": "force",
+		"moduleResolution": "bundler",
+		"noEmit": true,
+		"removeComments": true,
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"target": "ES2022"
+	},
+	"include": ["src"]
+}

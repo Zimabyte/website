@@ -1,0 +1,148 @@
+{
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"assist": {
+		"actions": {
+			"source": {
+				"recommended": true,
+				"useSortedAttributes": "on",
+				"useSortedKeys": "on",
+				"useSortedProperties": "on"
+			}
+		}
+	},
+	"files": {
+		"ignoreUnknown": true
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab",
+		"lineWidth": 80
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"correctness": {
+				"noUndeclaredDependencies": "error",
+				"noUnusedFunctionParameters": "error",
+				"noUnusedImports": "error",
+				"noUnusedLabels": "error",
+				"noUnusedPrivateClassMembers": "error",
+				"noUnusedVariables": "error"
+			},
+			"nursery": {},
+			"recommended": true,
+			"style": {
+				"noCommonJs": "error",
+				"noExportedImports": "error",
+				"noInferrableTypes": "error",
+				"noParameterAssign": "error",
+				"noUnusedTemplateLiteral": "error",
+				"noUselessElse": "error",
+				"noYodaExpression": "error",
+				"useArrayLiterals": "error",
+				"useAsConstAssertion": "error",
+				"useConsistentArrayType": {
+					"level": "error",
+					"options": {
+						"syntax": "shorthand"
+					}
+				},
+				"useConsistentBuiltinInstantiation": "error",
+				"useDefaultParameterLast": "error",
+				"useEnumInitializers": "error",
+				"useFilenamingConvention": {
+					"level": "error",
+					"options": {
+						"filenameCases": ["kebab-case"]
+					}
+				},
+				"useForOf": "error",
+				"useImportType": "error",
+				"useNamingConvention": {
+					"level": "error",
+					"options": {
+						"conventions": [
+							{
+								"formats": ["camelCase"],
+								"selector": {
+									"kind": "let"
+								}
+							},
+							{
+								"formats": ["camelCase", "CONSTANT_CASE", "PascalCase"],
+								"selector": {
+									"kind": "const",
+									"scope": "global"
+								}
+							},
+							{
+								"formats": ["camelCase", "PascalCase"],
+								"selector": {
+									"kind": "function"
+								}
+							},
+							{
+								"formats": ["PascalCase"],
+								"selector": {
+									"kind": "class"
+								}
+							},
+							{
+								"formats": ["PascalCase"],
+								"selector": {
+									"kind": "interface"
+								}
+							},
+							{
+								"formats": ["PascalCase"],
+								"selector": {
+									"kind": "enum"
+								}
+							},
+							{
+								"formats": ["PascalCase"],
+								"selector": {
+									"kind": "enumMember"
+								}
+							},
+							{
+								"formats": ["PascalCase"],
+								"selector": {
+									"kind": "typeAlias"
+								}
+							},
+							{
+								"formats": ["PascalCase"],
+								"selector": {
+									"kind": "namespaceLike"
+								}
+							},
+							{
+								"formats": ["camelCase"],
+								"selector": {
+									"kind": "objectLiteralProperty"
+								}
+							}
+						],
+						"strictCase": true
+					}
+				},
+				"useNumberNamespace": "error",
+				"useSelfClosingElements": "error",
+				"useShorthandAssign": "error",
+				"useSingleVarDeclarator": "error"
+			},
+			"suspicious": {
+				"noConsole": "error",
+				"noDuplicateElseIf": "error",
+				"noEmptyBlockStatements": "error",
+				"useAwait": "error"
+			}
+		}
+	},
+	"vcs": {
+		"clientKind": "git",
+		"enabled": true,
+		"useIgnoreFile": true
+	}
+}

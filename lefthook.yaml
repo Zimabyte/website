@@ -1,0 +1,9 @@
+output: false
+no_tty: true
+colors: false
+
+pre-commit:
+  commands:
+    lint:
+      run: npm run check
+      stage_fixed: true
