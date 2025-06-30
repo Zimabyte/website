@@ -64,6 +64,10 @@ body {
 	margin-top: 1rem;
 }
 
+.hero-text .at {
+	padding: 5px;
+}
+
 @media (max-width: 600px) {
 	.hero-text h1 {
 		font-size: 1rem;
