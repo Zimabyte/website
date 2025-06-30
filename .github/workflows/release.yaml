@@ -8,7 +8,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Only builds artifact, deployment must be manual
+  # Only uploads build artifact to workflow, deployment must be manual
   build:
     runs-on: ubuntu-24.04
     permissions:
