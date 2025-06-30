@@ -15,6 +15,7 @@ class Waves {
 	private renderer: WebGLRenderer;
 	private mesh!: InstancedMesh;
 	private count = 0;
+	private container: HTMLElement;
 
 	private particleSpacing = 120;
 	private particleSize = 40;
@@ -45,6 +46,7 @@ class Waves {
 	private lastTouchY = 0;
 
 	constructor(container: HTMLElement) {
+		this.container = container;
 		this.scene = new Scene();
 		this.camera = new PerspectiveCamera(
 			75,
@@ -149,11 +151,37 @@ class Waves {
 		}
 	}
 
+	private isEventOnContainer(event: MouseEvent | TouchEvent): boolean {
+		const rect = this.container.getBoundingClientRect();
+		let clientX: number;
+		let clientY: number;
+
+		if (event instanceof MouseEvent) {
+			clientX = event.clientX;
+			clientY = event.clientY;
+		} else if (event instanceof TouchEvent && event.touches.length > 0) {
+			clientX = event.touches[0].clientX;
+			clientY = event.touches[0].clientY;
+		} else {
+			return false;
+		}
+
+		return (
+			clientX >= rect.left &&
+			clientX <= rect.right &&
+			clientY >= rect.top &&
+			clientY <= rect.bottom
+		);
+	}
+
 	private setupEventListeners(): void {
 		// Mouse events
 		window.addEventListener(
 			"mousemove",
 			(event) => {
+				if (!this.isEventOnContainer(event)) {
+					return;
+				}
 				this.mouseX = event.clientX - this.windowHalfX;
 				this.mouseY = event.clientY - this.windowHalfY;
 			},
@@ -164,66 +192,70 @@ class Waves {
 		window.addEventListener(
 			"touchstart",
 			(event) => {
-				event.preventDefault();
+				if (!this.isEventOnContainer(event)) {
+					return;
+				}
 				this.isTouching = true;
 				const touch = event.touches[0];
 				this.lastTouchX = touch.clientX;
 				this.lastTouchY = touch.clientY;
 			},
-			{ passive: false },
+			{ passive: true },
 		);
 
 		window.addEventListener(
 			"touchmove",
 			(event) => {
-				event.preventDefault();
+				if (!this.isEventOnContainer(event)) {
+					return;
+				}
 				if (this.isTouching && event.touches.length > 0) {
 					const touch = event.touches[0];
 					const currentX = touch.clientX;
 					const currentY = touch.clientY;
 
-					// Calculate the difference from last touch position
 					const deltaX = currentX - this.lastTouchX;
 					const deltaY = currentY - this.lastTouchY;
-
-					// Update mouse position based on touch delta
-					// Scale the movement to make it feel natural
 					this.mouseX += deltaX * 2;
 					this.mouseY += deltaY * 2;
 
-					// Clamp to reasonable bounds to prevent extreme camera positions
 					const maxX = this.windowHalfX * 2;
 					const maxY = this.windowHalfY * 2;
 					this.mouseX = Math.max(-maxX, Math.min(maxX, this.mouseX));
 					this.mouseY = Math.max(-maxY, Math.min(maxY, this.mouseY));
 
-					// Update last touch position
 					this.lastTouchX = currentX;
 					this.lastTouchY = currentY;
 				}
 			},
-			{ passive: false },
+			{ passive: true },
 		);
 
 		window.addEventListener(
 			"touchend",
 			(event) => {
-				event.preventDefault();
+				if (!this.isEventOnContainer(event)) {
+					return;
+				}
 				this.isTouching = false;
 			},
-			{ passive: false },
+			{ passive: true },
 		);
 
 		window.addEventListener(
 			"touchcancel",
 			(event) => {
-				event.preventDefault();
+				if (!this.isEventOnContainer(event)) {
+					return;
+				}
 				this.isTouching = false;
 			},
-			{ passive: false },
+			{ passive: true },
 		);
 
-		window.addEventListener("resize", () => this.onWindowResize());
+		window.addEventListener("resize", () => this.onWindowResize(), {
+			passive: true,
+		});
 	}
 
 	private onWindowResize(): void {
