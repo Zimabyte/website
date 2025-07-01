@@ -17,33 +17,42 @@ class Waves {
 	private count = 0;
 	private container: HTMLElement;
 
-	private particleSpacing = 120;
-	private particleSize = 40;
-	private amountX = 300;
-	private amountY = 70;
-	private total = this.amountX * this.amountY;
-	private speed = 0.04;
-
-	private mouseX = 0;
-	private mouseY = 0;
 	private windowHalfX = window.innerWidth / 2;
 	private windowHalfY = window.innerHeight / 2;
 
+	// Colors
 	private blueMaterial = 0x5bc2e7;
-	// private blueBackground = 0x000814;
 	private blueBackground = 0x111111;
+
+	// Particle properties
+	private particleSpacing = 120;
+	private particleSize = 40;
+	private amountX = 200;
+	private amountY = 100;
+	private total = this.amountX * this.amountY;
+	private speed = 0.04;
+	private animationId = 0;
+
+	// Lift effect properties for mouse/touch press
+	private liftAmount = 0;
+	private liftMax = 150;
+	private liftSpeed = 1.5;
+	private liftDecay = 0.99;
+
+	// Mouse tracking states
+	private isMouseDown = false;
+	private mouseX = 0;
+	private mouseY = 0;
+
+	// Touch tracking states
+	private isTouching = false;
+	private lastTouchX = 0;
+	private lastTouchY = 0;
 
 	// Pre-calculate base positions and reuse objects
 	private basePositions: { x: number; z: number }[] = [];
 	private matrix = new Matrix4();
 	private color = new Color();
-
-	private animationId = 0;
-
-	// Touch tracking variables
-	private isTouching = false;
-	private lastTouchX = 0;
-	private lastTouchY = 0;
 
 	constructor(container: HTMLElement) {
 		this.container = container;
@@ -110,14 +119,25 @@ class Waves {
 	private updateInstances(): void {
 		let particleIndex = 0;
 
+		// Progressive lift logic
+		if (this.isMouseDown || this.isTouching) {
+			this.liftAmount = Math.min(
+				this.liftMax,
+				this.liftAmount + this.liftSpeed,
+			);
+		} else {
+			this.liftAmount = Math.max(0, this.liftAmount * this.liftDecay);
+		}
+
 		for (let ix = 0; ix < this.amountX; ix++) {
 			for (let iy = 0; iy < this.amountY; iy++) {
 				const basePos = this.basePositions[particleIndex];
 
-				// Wave animation
+				// Wave animation accouting for lift activation
 				const wave =
 					Math.sin((ix + this.count) * 0.3) * 50 +
-					Math.sin((iy + this.count) * 0.5) * 50;
+					Math.sin((iy + this.count) * 0.5) * 50 +
+					this.liftAmount;
 
 				// Scale animation
 				const scale =
@@ -144,7 +164,6 @@ class Waves {
 			}
 		}
 
-		// Tell Three.js to update the instance data
 		this.mesh.instanceMatrix.needsUpdate = true;
 		if (this.mesh.instanceColor) {
 			this.mesh.instanceColor.needsUpdate = true;
@@ -177,6 +196,17 @@ class Waves {
 	private setupEventListeners(): void {
 		// Mouse events
 		window.addEventListener(
+			"mousedown",
+			(event) => {
+				if (!this.isEventOnContainer(event)) {
+					return;
+				}
+				this.isMouseDown = true;
+			},
+			{ passive: true },
+		);
+
+		window.addEventListener(
 			"mousemove",
 			(event) => {
 				if (!this.isEventOnContainer(event)) {
@@ -188,7 +218,15 @@ class Waves {
 			{ passive: true },
 		);
 
-		// Touch events for mobile
+		window.addEventListener(
+			"mouseup",
+			() => {
+				this.isMouseDown = false;
+			},
+			{ passive: true },
+		);
+
+		// Touch events
 		window.addEventListener(
 			"touchstart",
 			(event) => {
@@ -233,10 +271,7 @@ class Waves {
 
 		window.addEventListener(
 			"touchend",
-			(event) => {
-				if (!this.isEventOnContainer(event)) {
-					return;
-				}
+			() => {
 				this.isTouching = false;
 			},
 			{ passive: true },
@@ -273,18 +308,17 @@ class Waves {
 	}
 
 	private render(): void {
-		// Camera follows mouse/touch with some influence (same as original)
+		// Camera follows mouse/touch with some influence
 		this.camera.position.x += (this.mouseX - this.camera.position.x) * 0.05;
 		this.camera.position.y += (-this.mouseY - this.camera.position.y) * 0.05;
 
-		// Set camera position similar to original
 		this.camera.position.set(
 			this.camera.position.x,
 			355 + this.camera.position.y * 0.1,
 			1000,
 		);
 
-		// Update all instances
+		// Update all position transforms
 		this.updateInstances();
 
 		this.renderer.render(this.scene, this.camera);
@@ -299,5 +333,10 @@ class Waves {
 	}
 }
 
-const container = document.querySelector("#render") as HTMLElement;
-new Waves(container);
+const renderContainer = document.querySelector("#render") as HTMLElement;
+new Waves(renderContainer);
+
+const emailLink = document.querySelector("#email") as HTMLAnchorElement;
+emailLink.onclick = () => {
+	navigator.clipboard.writeText(emailLink.href.replace("mailto:", ""));
+};
